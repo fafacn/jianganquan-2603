@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRCC重大事故隐患判定标准 - 起重吊装专项</title>
+    <style>
+        /* --- 核心配色与全局设置 --- */
+        :root {
+            --crcc-blue: #003366;
+            --crcc-red: #E60012;
+            --text-main: #1a202c;
+            --bg-grad: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%); 
+            
+            /* 机械工业风配色 */
+            --c-heavy: #334155;
+            --c-warn: #ea580c;
+            --c-steel: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background: var(--bg-grad);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-main);
+        }
+
+        /* 强制隐藏所有的系统引证标签 */
+        .sys-hidden { display: none !important; }
+
+        /* --- 主容器 --- */
+        .container {
+            width: 96vw;
+            height: 94vh;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        /* --- 标题与引言区 --- */
+        .header-section {
+            flex: 0 0 auto;
+            border-bottom: 2px solid rgba(0, 51, 102, 0.2);
+            padding-bottom: 12px;
+        }
+        .title-row {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+        }
+        h2 { font-size: 1.8rem; color: var(--crcc-blue); display: flex; align-items: center; gap: 12px; }
+        h2::before { content:''; width: 8px; height: 32px; background: var(--crcc-red); display: block; }
+        .page-badge { background: var(--crcc-red); color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; box-shadow: 0 2px 5px rgba(230,0,18,0.3);}
+        
+        /* 顶部引言文字 */
+        .intro-box {
+            background: #f1f5f9; border-left: 4px solid var(--c-warn);
+            padding: 10px 15px; border-radius: 0 8px 8px 0; font-size: 0.95rem; color: #334155; font-weight: bold;
+        }
+
+        /* --- 网格布局 (左4 右6) --- */
+        .grid-layout {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 38% 60%; 
+            gap: 20px;
+            overflow: hidden;
+            padding-bottom: 5px;
+        }
+
+        /* 左右列容器 */
+        .left-col { display: flex; flex-direction: column; gap: 15px; overflow: hidden; }
+        .right-col { display: flex; flex-direction: column; overflow: hidden; }
+
+        /* --- 滚动条美化 --- */
+        .scrollable { overflow-y: auto; padding-right: 8px; }
+        .scrollable::-webkit-scrollbar { width: 6px; }
+        .scrollable::-webkit-scrollbar-track { background: transparent; }
+        .scrollable::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 3px; }
+
+        /* --- 卡片通用样式 --- */
+        .mech-card {
+            border-radius: 10px; padding: 18px; position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            animation: fadeInUp 0.6s ease backwards;
+        }
+        .mc-header {
+            font-size: 1.2rem; font-weight: 900; margin-bottom: 15px; padding-bottom: 10px;
+            display: flex; align-items: center; gap: 10px; border-bottom: 2px solid;
+            position: sticky; top: 0; z-index: 10;
+        }
+
+        /* 左上：公路桥梁专用 */
+        .card-hw { background: #fff; border: 1px solid #cbd5e1; flex: 1; animation-delay: 0.1s; }
+        .card-hw .mc-header { color: var(--crcc-blue); border-bottom-color: #93c5fd; background: #fff; }
+        .card-hw .list-bullet { color: var(--crcc-blue); }
+
+        /* 左下：特种设备专项 */
+        .card-sp { background: #fff5f5; border: 1px solid #fecaca; flex: 0 0 auto; animation-delay: 0.2s; }
+        .card-sp .mc-header { color: var(--crcc-red); border-bottom-color: #fca5a5; background: #fff5f5; }
+        .card-sp .list-item { background: #fff; border: 1px solid #fee2e2; }
+
+        /* 右侧：通用起重 (深色金属风) */
+        .card-gen { background: var(--c-heavy); color: #f8fafc; flex: 1; display: flex; flex-direction: column; animation-delay: 0.3s; border: 2px solid #475569; }
+        .card-gen .mc-header { color: #fdba74; border-bottom-color: #f97316; background: var(--c-heavy); margin-top: -5px; padding-top: 5px; }
+        .card-gen .list-item { background: rgba(255,255,255,0.08); color: #e2e8f0; border-left: 3px solid #f97316; }
+        .card-gen .list-bullet { color: #fdba74; }
+        .card-gen .list-item:hover { background: rgba(255,255,255,0.12); }
+
+        /* --- 列表项 --- */
+        .list-item {
+            display: flex; gap: 10px; margin-bottom: 12px;
+            font-size: 0.95rem; line-height: 1.6; color: #333;
+            background: #f8fafc; padding: 10px 12px; border-radius: 6px;
+        }
+        .list-bullet { font-weight: bold; flex-shrink: 0; }
+        .list-text { text-align: justify; }
+
+        /* --- 底部导航按钮 --- */
+        .nav-container { position: fixed; bottom: 30px; right: 30px; display: flex; gap: 15px; z-index: 100; }
+        .nav-btn {
+            padding: 10px 25px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 0.95rem;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2); transition: all 0.3s; display: flex; align-items: center; gap: 8px;
+        }
+        .prev-btn { background: white; color: var(--crcc-blue); border: 2px solid var(--crcc-blue); }
+        .prev-btn:hover { background: #f0f7ff; transform: translateY(-3px); }
+        .next-btn { background: var(--crcc-red); color: white; border: 2px solid var(--crcc-red); }
+        .next-btn:hover { background: #b91c1c; border-color: #b91c1c; transform: translateY(-3px); }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-section">
+            <div class="title-row">
+                <h2>起重机械及吊装作业专项规定</h2>
+                <div class="page-badge">进度: 6/6 (结束)</div>
+            </div>
+            <div class="intro-box">
+                针对高速公路施工中极为关键的起重机械及吊装作业，分为“公路及桥梁专用”、“通用吊装与机械作业”、“特种设备专项”三个板块，如下：<span class="sys-hidden">[cite: 144]</span>
+            </div>
+        </div>
+
+        <div class="grid-layout">
+            
+            <div class="left-col">
+                <div class="mech-card card-hw scrollable">
+                    <div class="mc-header">🌉 一、公路及桥梁工程专项起重规定<span class="sys-hidden">[cite: 145]</span></div>
+                    <div style="font-size:0.85rem; color:#64748b; margin-bottom:10px;">此部分明确列入“公路工程”相关章节，直接针对公路施工环境和架桥作业：<span class="sys-hidden">[cite: 146]</span></div>
+                    
+                    <div class="list-item">
+                        <span class="list-bullet">•</span>
+                        <span class="list-text">使用未经检验或验收不合格的起重机械，未按要求安装、拆除起重设备，使用汽车吊、塔吊等起重机械吊运人员。<span class="sys-hidden">[cite: 147]</span></span>
+                    </div>
+                    <div class="list-item">
+                        <span class="list-bullet">•</span>
+                        <span class="list-text">架桥机经过改装等情形，但未按规定检测；架桥机未调平即开展架梁作业；横坡、高差、梁重等架梁工况超过或濒临架桥机允许值；在道路、航道上方进行梁板安装或架桥机移动过孔期间，未采取临时管控措施。<span class="sys-hidden">[cite: 148]</span></span>
+                    </div>
+                </div>
+
+                <div class="mech-card card-sp scrollable">
+                    <div class="mc-header">🚨 三、特种设备专项规定 (起重机械)<span class="sys-hidden">[cite: 165]</span></div>
+                    <div style="font-size:0.85rem; color:#991b1b; margin-bottom:10px;">文件中“特种设备”专章针对起重机械本身的硬性指标进行了规定，一旦触碰即被判定为重大事故隐患：<span class="sys-hidden">[cite: 166]</span></div>
+                    
+                    <div class="list-item"><span class="list-bullet">•</span><span class="list-text">未经首次检验。<span class="sys-hidden">[cite: 167]</span></span></div>
+                    <div class="list-item"><span class="list-bullet">•</span><span class="list-text">定期检验(含首次检验)的检验结论为“不合格”。<span class="sys-hidden">[cite: 168]</span></span></div>
+                    <div class="list-item"><span class="list-bullet">•</span><span class="list-text">急停开关缺失或失效。<span class="sys-hidden">[cite: 169]</span></span></div>
+                    <div class="list-item"><span class="list-bullet">•</span><span class="list-text">起重量限制器、起重力矩限制器、防坠安全器缺失或失效。<span class="sys-hidden">[cite: 170]</span></span></div>
+                    <div class="list-item"><span class="list-bullet">•</span><span class="list-text">室外工作的轨道式起重机械抗风防滑装置缺失或失效。<span class="sys-hidden">[cite: 171]</span></span></div>
+                </div>
+            </div>
+
+            <div class="right-col">
+                <div class="mech-card card-gen scrollable">
+                    <div class="mc-header">⚙️ 二、通用起重及吊装施工作业 (跨专业适用)<span class="sys-hidden">[cite: 149]</span></div>
+                    <div style="font-size:0.9rem; color:#94a3b8; margin-bottom:15px; border-bottom:1px solid #475569; padding-bottom:10px;">
+                        高速公路施工(如互通立交、特大桥、隧道等)常会用到塔吊、汽车吊、履带吊等大型设备，以下通用类重大事故隐患判定标准均高度适用：<span class="sys-hidden">[cite: 150]</span>
+                    </div>
+                    
+                    <div class="list-item"><span class="list-bullet">•</span><span class="list-text">塔式起重机、施工升降机、物料提升机等起重机械设备未经验收合格即投入使用，或未按规定办理使用登记。<span class="sys-hidden">[cite: 151]</span></span></div>
+                    <div class="list-item"><span class="list-bullet">•</span><span class="list-text">建筑起重机械的基础承载力和变形不满足设计要求。<span class="sys-hidden">[cite: 152]</span></span></div>
+                    <div class="list-item"><span class="list-bullet">•</span><span class="list-text">建筑起重机械安装、拆卸、爬升(降)以及附着前未对结构件、爬升装置和附着装置以及高强度螺栓、销轴、定位板等连接件及安全装置进行检查。<span class="sys-hidden">[cite: 153, 154]</span></span></div>
+                    <div class="list-item"><span class="list-bullet">•</span><span class="list-text">建筑起重机械的安全装置不齐全、失效或者被违规拆除、破坏。<span class="sys-hidden">[cite: 155]</span></span></div>
+                    <div class="list-item"><span class="list-bullet">•</span><span class="list-text">建筑起重机械主要受力构件有可见裂纹、严重锈蚀、塑性变形、开焊，或其连接螺栓、销轴缺失或失效。<span class="sys-hidden">[cite: 156]</span></span></div>
+                    <div class="list-item"><span class="list-bullet">•</span><span class="list-text">施工升降机附着间距和最高附着以上的最大悬高及垂直度不符合规范要求。<span class="sys-hidden">[cite: 157]</span></span></div>
+                    <div class="list-item"><span class="list-bullet">•</span><span class="list-text">塔式起重机独立起升高度、附着间距和最高附着以上的最大悬高及垂直度不符合规范要求。<span class="sys-hidden">[cite: 158]</span></span></div>
+                    <div class="list-item"><span class="list-bullet">•</span><span class="list-text">塔式起重机与周边建(构)筑物或群塔作业未保持安全距离。<span class="sys-hidden">[cite: 159]</span></span></div>
+                    <div class="list-item"><span class="list-bullet">•</span><span class="list-text">使用达到报废标准的建筑起重机械，或使用达到报废标准的吊索具进行起重吊装作业。<span class="sys-hidden">[cite: 160]</span></span></div>
+                    <div class="list-item"><span class="list-bullet">•</span><span class="list-text">使用混凝土泵车，打桩设备、汽车起重机、履带起重机等大型机械设备，未校核其运行路线及作业位置承载能力。<span class="sys-hidden">[cite: 161]</span></span></div>
+                    <div class="list-item"><span class="list-bullet">•</span><span class="list-text">在雷雨、大雪、浓雾或大风等恶劣天气条件下违规进行吊装作业、设备安装、拆卸和高处作业。<span class="sys-hidden">[cite: 162]</span></span></div>
+                    <div class="list-item"><span class="list-bullet">•</span><span class="list-text">施工现场使用塔式起重机、汽车起重机、履带起重机或轮胎起重机等非载人设备吊运人员。<span class="sys-hidden">[cite: 163]</span></span></div>
+                    <div class="list-item"><span class="list-bullet">•</span><span class="list-text">爆破、吊装、有限空间作业、人员密集场所动火等危险作业，未安排专门人员进行现场安全管理或未按要求履行作业审批手续的。<span class="sys-hidden">[cite: 164]</span></span></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="nav-container">
+        <a href="p5.html" class="nav-btn prev-btn">⬅ 上一页</a>
+        <a href="p1.html" class="nav-btn next-btn">🏠 结束汇报 (返回首页)</a>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.body.innerHTML = document.body.innerHTML.replace(/\]+\]/g, '');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRCC重大事故隐患判定标准 - 公路工程专项(1)</title>
+    <style>
+        /* --- 核心配色与全局设置 --- */
+        :root {
+            --crcc-blue: #003366;
+            --crcc-red: #E60012;
+            --text-main: #1a202c;
+            --text-sub: #4a5568;
+            --bg-grad: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            
+            /* 分类功能色 */
+            --c-manage: #3182ce; /* 管理蓝 */
+            --c-aux: #d69e2e;    /* 辅助黄 */
+            --c-subgrade: #38a169; /* 路基绿 */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background: var(--bg-grad);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-main);
+        }
+
+        /* --- 主容器 --- */
+        .container {
+            width: 96vw;
+            height: 94vh;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 25px;
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+
+        /* --- 标题区 --- */
+        .header-section {
+            flex: 0 0 auto;
+            border-bottom: 2px solid rgba(0, 51, 102, 0.1);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        h2 { font-size: 1.8rem; color: var(--crcc-blue); display: flex; align-items: center; gap: 12px; }
+        h2::before { content:''; width: 8px; height: 32px; background: var(--crcc-red); display: block; }
+        .subtitle { font-size: 1.1rem; color: var(--text-sub); margin-top: 6px; font-weight: bold;}
+
+        /* --- 内容网格布局 (三列等宽) --- */
+        .grid-layout {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 20px;
+            overflow: hidden;
+            padding-bottom: 10px;
+        }
+
+        /* --- 竖向分类卡片 --- */
+        .category-card {
+            background: rgba(255,255,255,0.95); 
+            border-radius: 12px; 
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column;
+            border-top: 5px solid transparent; /* 动态颜色 */
+            animation: fadeInUp 0.6s ease backwards;
+            overflow-y: auto;
+        }
+        
+        /* 隐藏滚动条但保留功能 */
+        .category-card::-webkit-scrollbar { width: 6px; }
+        .category-card::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 3px; }
+
+        /* 卡片主题色分配 */
+        .card-manage { border-top-color: var(--c-manage); animation-delay: 0.1s; }
+        .card-aux { border-top-color: var(--c-aux); animation-delay: 0.2s; }
+        .card-subgrade { border-top-color: var(--c-subgrade); animation-delay: 0.3s; }
+
+        .card-title {
+            font-size: 1.25rem; font-weight: bold; margin-bottom: 15px;
+            display: flex; align-items: center; gap: 10px;
+            padding-bottom: 12px; border-bottom: 1px dashed #e2e8f0;
+        }
+        .card-manage .card-title { color: var(--c-manage); }
+        .card-aux .card-title { color: #b7791f; }
+        .card-subgrade .card-title { color: var(--c-subgrade); }
+
+        .icon-box {
+            width: 36px; height: 36px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; color: white;
+        }
+        .card-manage .icon-box { background: var(--c-manage); }
+        .card-aux .icon-box { background: var(--c-aux); }
+        .card-subgrade .icon-box { background: var(--c-subgrade); }
+
+        /* --- 列表项样式 --- */
+        .list-item {
+            display: flex; gap: 12px; margin-bottom: 15px;
+            font-size: 0.95rem; line-height: 1.6; color: #333;
+            background: #f8fafc; padding: 12px; border-radius: 8px;
+            border-left: 3px solid #cbd5e0;
+            transition: background 0.3s;
+        }
+        .list-item:hover { background: #edf2f7; }
+        
+        .list-bullet {
+            color: var(--crcc-red); font-weight: bold; font-size: 1.1rem;
+            flex-shrink: 0; line-height: 1.4;
+        }
+        .list-text { text-align: justify; }
+
+        /* --- 底部导航按钮 --- */
+        .nav-container {
+            position: fixed; bottom: 30px; right: 30px;
+            display: flex; gap: 15px; z-index: 100;
+        }
+        
+        .nav-btn {
+            padding: 10px 25px; border-radius: 30px; 
+            text-decoration: none; font-weight: bold; font-size: 0.95rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); transition: all 0.3s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        
+        /* 上一页按钮样式 (白底蓝字) */
+        .prev-btn {
+            background: white; color: var(--crcc-blue); 
+            border: 1px solid var(--crcc-blue);
+        }
+        .prev-btn:hover { background: #f0f7ff; transform: translateY(-2px); }
+
+        /* 下一页按钮样式 (蓝底白字) */
+        .next-btn {
+            background: var(--crcc-blue); color: white; 
+            border: 1px solid var(--crcc-blue);
+        }
+        .next-btn:hover { background: var(--crcc-red); border-color: var(--crcc-red); transform: translateY(-2px); }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-section">
+            <h2>一、公路工程专项（直接相关）</h2>
+            <div class="subtitle">此板块为文件中明确属于“公路工程”类别的检查项目及重大事故隐患认定情形 (1/2)</div>
+        </div>
+
+        <div class="grid-layout">
+            
+            <div class="category-card card-manage">
+                <div class="card-title">
+                    <div class="icon-box">📋</div>
+                    基础管理
+                </div>
+                <div class="list-item" style="border-left-color: var(--c-manage);">
+                    <div class="list-bullet">•</div>
+                    <div class="list-text">未按规定编制或未按程序审批危险性较大工程专项施工方案；超过一定规模的危险性较大工程的专项施工方案未组织专家论证、审查；未按照专项施工方案组织施工；不配备应急救援队伍，不开展应急演练</div>
+                </div>
+            </div>
+
+            <div class="category-card card-aux">
+                <div class="card-title">
+                    <div class="icon-box">🏗️</div>
+                    辅助施工
+                </div>
+                <div class="list-item" style="border-left-color: var(--c-aux);">
+                    <div class="list-bullet">•</div>
+                    <div class="list-text">在大型设备设施倾覆影响范围内设置办公区、生活区；临时驻地或场站建设不符合规范要求设置在危险区域</div>
+                </div>
+                <div class="list-item" style="border-left-color: var(--c-aux);">
+                    <div class="list-bullet">○</div>
+                    <div class="list-text">生活区、办公区等人员密集场所与集中爆破区、易燃易爆物、危化品库、高压电力线的安全距离不足</div>
+                </div>
+                <div class="list-item" style="border-left-color: var(--c-aux);">
+                    <div class="list-bullet">○</div>
+                    <div class="list-text">生活、办公用房、易燃易爆危险品库等重点部位消防安全距离不符合要求且未采取有效防护措施；生活、办公用房、易燃易爆危险品库等建筑构件的燃烧性能等级未达到A级，不符合GB8624 和GB/T 23932 要求</div>
+                </div>
+                <div class="list-item" style="border-left-color: var(--c-aux);">
+                    <div class="list-bullet">○</div>
+                    <div class="list-text">未定期开展围堰监测监控，工况发生变化时未及时采取有效的管控措施；碰撞、随意拆除、擅自削弱围堰内部支撑杆件或在其上堆放重物，碰撞造成杆件变形等缺陷未及时修复；水上钢围堰未科学设置船舶驻泊位置随意驻泊施工船舶，无船舶防撞措施；未进行焊缝检验及水密试验</div>
+                </div>
+            </div>
+
+            <div class="category-card card-subgrade">
+                <div class="card-title">
+                    <div class="icon-box">⛰️</div>
+                    路基工程
+                </div>
+                <div class="list-item" style="border-left-color: var(--c-subgrade);">
+                    <div class="list-bullet">○</div>
+                    <div class="list-text">含岩堆、松散岩石或滑坡地段的高边坡开挖、排险、防护措施不足；未按照自上而下的顺序逐级开挖、逐级防护；未有效开展边坡稳定性监测；靠近交通要道作业时不设置隔离防护、警示标志等措施</div>
+                </div>
+                <div class="list-item" style="border-left-color: var(--c-subgrade);">
+                    <div class="list-bullet">○</div>
+                    <div class="list-text">深基坑未按要求逐级开挖逐级支护；未按要求进行降(排)水、放坡；未按要求开展变形监测，出现大量渗水、流土、管涌等情况未及时处理</div>
+                </div>
+                <div class="list-item" style="border-left-color: var(--c-subgrade);">
+                    <div class="list-bullet">○</div>
+                    <div class="list-text">邻近建(构)筑物、地下管线、沉井箱体未监测或监测出现异常并超过预警值；未按既定开挖范围和深度进行开挖；不排水下沉时沉井内水头高度不按要求控制；水中沉井初沉未考虑水流对河床冲刷影响</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="nav-container">
+        <a href="p1.html" class="nav-btn prev-btn">⬅ 上一页</a>
+        <a href="p3.html" class="nav-btn next-btn">下一页 ➔</a>
+    </div>
+
+</body>
+</html>

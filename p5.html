@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRCC重大事故隐患判定标准 - 高风险作业(2)</title>
+    <style>
+        /* --- 核心配色与全局设置 --- */
+        :root {
+            --crcc-blue: #003366;
+            --crcc-red: #E60012;
+            --text-main: #1a202c;
+            --bg-grad: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            
+            /* 四宫格主题色 */
+            --c-q1: #005A9C; /* 铁路桥涵深蓝 */
+            --c-q2: #6B46C1; /* 高大模板亮紫 */
+            --c-q3: #D97706; /* 现浇支架琥珀 */
+            --c-q4: #059669; /* 市政脚手架翠绿 */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background: var(--bg-grad);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-main);
+        }
+
+        /* --- 主容器 --- */
+        .container {
+            width: 96vw;
+            height: 94vh;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            border: 1px solid white;
+        }
+
+        /* --- 标题区 --- */
+        .header-section {
+            flex: 0 0 auto;
+            border-bottom: 2px solid rgba(0, 51, 102, 0.1);
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .title-left { display: flex; align-items: center; gap: 15px; }
+        h2 { font-size: 1.8rem; color: var(--crcc-blue); display: flex; align-items: center; gap: 12px; }
+        h2::before { content:''; width: 8px; height: 32px; background: var(--crcc-red); display: block; }
+        .subtitle { font-size: 1.1rem; color: #4a5568; margin-top: 6px; font-weight: bold;}
+        .page-badge { background: var(--crcc-blue); color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9rem;}
+
+        /* --- 四宫格布局 (2x2) --- */
+        .grid-layout {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 20px;
+            overflow: hidden;
+            padding-bottom: 5px;
+        }
+
+        /* --- 滚动条美化 --- */
+        .scrollable::-webkit-scrollbar { width: 5px; }
+        .scrollable::-webkit-scrollbar-track { background: transparent; }
+        .scrollable::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 3px; }
+
+        /* --- 四宫格卡片通用样式 --- */
+        .quad-card {
+            background: #ffffff; border-radius: 12px;
+            display: flex; flex-direction: column;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            overflow-y: auto; padding: 15px 20px;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            animation: fadeInUp 0.6s ease backwards;
+            /* 模拟脚手架网格背景 */
+            background-image: 
+                linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
+            background-size: 15px 15px;
+        }
+
+        .quad-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); transition: 0.3s; }
+
+        .qc-header {
+            font-size: 1.15rem; font-weight: bold; padding-bottom: 10px; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 10px; border-bottom: 2px solid;
+            position: sticky; top: 0; background: #fff; z-index: 5;
+        }
+
+        /* --- 四个象限的主题定制 --- */
+        /* Q1: 铁路桥涵 */
+        .card-q1 { animation-delay: 0.1s; border-left: 5px solid var(--c-q1); }
+        .card-q1 .qc-header { color: var(--c-q1); border-bottom-color: #bee3f8; }
+        
+        /* Q2: 民航高大模板 */
+        .card-q2 { animation-delay: 0.2s; border-left: 5px solid var(--c-q2); }
+        .card-q2 .qc-header { color: var(--c-q2); border-bottom-color: #e9d8fd; }
+        
+        /* Q3: 民航现浇支架 */
+        .card-q3 { animation-delay: 0.3s; border-left: 5px solid var(--c-q3); }
+        .card-q3 .qc-header { color: var(--c-q3); border-bottom-color: #fbd38d; }
+        
+        /* Q4: 市政脚手架 */
+        .card-q4 { animation-delay: 0.4s; border-left: 5px solid var(--c-q4); }
+        .card-q4 .qc-header { color: var(--c-q4); border-bottom-color: #9ae6b4; }
+
+        /* --- 列表项 --- */
+        .list-item {
+            display: flex; gap: 8px; margin-bottom: 10px;
+            font-size: 0.9rem; line-height: 1.5; color: #333;
+            background: rgba(255,255,255,0.9); padding: 8px 10px; border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+        .list-bullet { font-weight: bold; color: var(--crcc-red); }
+
+        /* --- 底部导航按钮 --- */
+        .nav-container { position: fixed; bottom: 30px; right: 30px; display: flex; gap: 15px; z-index: 100; }
+        .nav-btn {
+            padding: 10px 25px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 0.95rem;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15); transition: all 0.3s; display: flex; align-items: center; gap: 8px;
+        }
+        .prev-btn { background: white; color: var(--crcc-blue); border: 2px solid var(--crcc-blue); }
+        .prev-btn:hover { background: #f0f7ff; transform: translateY(-3px); }
+        .next-btn { background: var(--crcc-blue); color: white; border: 2px solid var(--crcc-blue); }
+        .next-btn:hover { background: var(--crcc-red); border-color: var(--crcc-red); transform: translateY(-3px); }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-section">
+            <div class="title-left">
+                <h2>二、公路建设高度相关的高风险作业（跨专业适用）</h2>
+                <div class="subtitle">3. 涉高大模板、现浇支架及脚手架类</div>
+            </div>
+            <div class="page-badge">进度: 5/6</div>
+        </div>
+
+        <div class="grid-layout">
+            
+            <div class="quad-card card-q1 scrollable">
+                <div class="qc-header">🌉 桥涵工程 (铁路建设工程类 - 涉现浇梁支架/高墩)</div>
+                <div class="list-item">
+                    <span class="list-bullet">○</span>
+                    <span>水上作业平台、围堰、沉井等未进行专项设计，未按设计施工，施工期实际水位高于设计最高水位；围堰或沉井出现漏水、翻砂涌水、结构变形未及时采取有效措施的 [cite: 115, 116, 117]</span>
+                </div>
+                <div class="list-item">
+                    <span class="list-bullet">○</span>
+                    <span>超过8m(含)高墩施工过程中，模板加固、混凝土浇筑速度不符合专项施工方案要求的 [cite: 118]</span>
+                </div>
+                <div class="list-item">
+                    <span class="list-bullet">○</span>
+                    <span>现浇梁支架、移动模架、挂篮等非标设备设施未经专项设计，未经预压、试吊等现场试验验证即投入使用或不按方案拆除；支架地基承载力不足的 [cite: 119, 120]</span>
+                </div>
+            </div>
+
+            <div class="quad-card card-q2 scrollable">
+                <div class="qc-header">📐 高大模板施工 (民航专业工程类)</div>
+                <div class="list-item"><span class="list-bullet">○</span><span>基础承载力和变形不满足设计要求 [cite: 121, 122]</span></div>
+                <div class="list-item"><span class="list-bullet">○</span><span>模板变形不满足设计要求 [cite: 123]</span></div>
+                <div class="list-item"><span class="list-bullet">○</span><span>模板的安装未按施工专项方案要求设置纵、横、斜支撑或水平拉杆 [cite: 124]</span></div>
+                <div class="list-item"><span class="list-bullet">○</span><span>安装后模板、支撑构件间的相互位置不符合规范及施工方案要求 [cite: 125]</span></div>
+                <div class="list-item"><span class="list-bullet">○</span><span>钢筋等材料集中堆放或混凝土浇筑顺序未按方案规定进行，局部荷载大于设计值 [cite: 126, 127]</span></div>
+                <div class="list-item"><span class="list-bullet">○</span><span>模板拆除时混凝土强度未达到设计或规范要求 [cite: 128]</span></div>
+                <div class="list-item"><span class="list-bullet">○</span><span>拆除顺序未按施工专项方案要求进行 [cite: 129]</span></div>
+            </div>
+
+            <div class="quad-card card-q3 scrollable">
+                <div class="qc-header">🏗️ 现浇混凝土支架 (民航专业工程类)</div>
+                <div class="list-item"><span class="list-bullet">○</span><span>支架的地基或基础的承载力和变形不满足设计要求 [cite: 130, 131]</span></div>
+                <div class="list-item"><span class="list-bullet">○</span><span>支架未按设计或施工规范要求预压 [cite: 132]</span></div>
+                <div class="list-item"><span class="list-bullet">○</span><span>存在相互搭接且作为支撑结构的支架或模板在拆除时无临时稳定措施 [cite: 133]</span></div>
+                <div class="list-item"><span class="list-bullet">○</span><span>支架构配件不符合规范要求 [cite: 134]</span></div>
+            </div>
+
+            <div class="quad-card card-q4 scrollable">
+                <div class="qc-header">🏢 模板工程与脚手架工程 (房屋市政工程类)</div>
+                <div class="list-item"><span class="list-bullet">○</span><span>模板支架的基础承载力和变形不满足设计要求 [cite: 135, 136]</span></div>
+                <div class="list-item"><span class="list-bullet">○</span><span>模板支架承受的施工荷载超过设计值 [cite: 137]</span></div>
+                <div class="list-item"><span class="list-bullet">○</span><span>模板支架拆除及滑模、爬模爬升时，混凝土强度未达到设计或规范要求 [cite: 138]</span></div>
+                <div class="list-item"><span class="list-bullet">○</span><span>危险性较大的混凝土模板支撑工程未按专项施工方案要求的顺序或分层厚度浇筑混凝土 [cite: 139, 140]</span></div>
+                <div class="list-item"><span class="list-bullet">○</span><span>脚手架工程的基础承载力和变形不满足设计要求 [cite: 141]</span></div>
+                <div class="list-item"><span class="list-bullet">○</span><span>未设置连墙件或连墙件整层缺失 [cite: 142]</span></div>
+                <div class="list-item"><span class="list-bullet">○</span><span>附着式升降脚手架的防倾覆、防坠落或同步升降控制装置不符合设计要求、失效或缺失 [cite: 143]</span></div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="nav-container">
+        <a href="p4.html" class="nav-btn prev-btn">⬅ 上一页</a>
+        <a href="p6.html" class="nav-btn next-btn">下一页 (最后一页) ➔</a>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.body.innerHTML = document.body.innerHTML.replace(/\]+\]/g, '');
+        });
+    </script>
+</body>
+</html>

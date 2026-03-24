@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRCC重大事故隐患判定标准 - 高风险作业(1)</title>
+    <style>
+        /* --- 核心配色与全局设置 --- */
+        :root {
+            --crcc-blue: #003366;
+            --crcc-red: #E60012;
+            --text-main: #1a202c;
+            --bg-grad: linear-gradient(135deg, #e2e8f0 0%, #edf2f7 100%);
+            
+            /* 主题色 */
+            --theme-sky: #2b6cb0;
+            --theme-fire: #dd6b20;
+            --theme-earth: #744210;
+            --theme-rock: #4a5568;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background: var(--bg-grad);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-main);
+        }
+
+        /* --- 主容器 --- */
+        .container {
+            width: 96vw;
+            height: 94vh;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            border: 1px solid white;
+        }
+
+        /* --- 标题与引言区 --- */
+        .header-section {
+            flex: 0 0 auto;
+            border-bottom: 2px solid rgba(0, 51, 102, 0.1);
+            padding-bottom: 15px;
+        }
+        .title-row {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+        }
+        h2 { font-size: 1.8rem; color: var(--crcc-blue); display: flex; align-items: center; gap: 12px; }
+        h2::before { content:''; width: 8px; height: 32px; background: var(--crcc-red); display: block; }
+        .page-badge { background: var(--crcc-blue); color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9rem;}
+        
+        /* 顶部引言文字 */
+        .intro-box {
+            background: #f8fafc; border-left: 4px solid var(--crcc-blue);
+            padding: 10px 15px; border-radius: 0 8px 8px 0; font-size: 0.95rem; color: #4a5568;
+        }
+
+        /* --- 双栏内容布局 (50:50) --- */
+        .grid-layout {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr; 
+            gap: 25px;
+            overflow: hidden;
+            padding-bottom: 5px;
+        }
+
+        /* --- 滚动条美化 --- */
+        .scrollable::-webkit-scrollbar { width: 6px; }
+        .scrollable::-webkit-scrollbar-track { background: transparent; }
+        .scrollable::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 3px; }
+
+        /* --- 核心列容器样式 --- */
+        .main-column {
+            border-radius: 12px;
+            display: flex; flex-direction: column; gap: 15px;
+            overflow-y: auto; padding-right: 10px;
+            animation: fadeInUp 0.6s ease backwards;
+        }
+        .col-left { animation-delay: 0.1s; }
+        .col-right { animation-delay: 0.2s; }
+
+        /* 列大标题 */
+        .col-header {
+            font-size: 1.4rem; font-weight: 900; padding: 15px; border-radius: 10px;
+            display: flex; align-items: center; gap: 10px; color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: sticky; top: 0; z-index: 10;
+        }
+        /* 左侧标题渐变 (天空与火) */
+        .ch-skyfire { background: linear-gradient(135deg, var(--theme-sky) 0%, var(--theme-fire) 100%); }
+        /* 右侧标题渐变 (岩石与土) */
+        .ch-earthrock { background: linear-gradient(135deg, var(--theme-earth) 0%, var(--theme-rock) 100%); }
+
+        /* --- 内部卡片样式 --- */
+        .sub-card {
+            background: white; border-radius: 8px; border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04); overflow: hidden;
+        }
+        .sc-title {
+            padding: 10px 15px; font-weight: bold; font-size: 1.05rem;
+            display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #e2e8f0;
+        }
+        .sc-body { padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+
+        /* 卡片主题色分配 */
+        .card-sky .sc-title { background: #ebf8ff; color: var(--theme-sky); border-left: 4px solid var(--theme-sky); }
+        .card-fire .sc-title { background: #fffaf0; color: var(--theme-fire); border-left: 4px solid var(--theme-fire); }
+        .card-municipal .sc-title { background: #fdf2f8; color: #97266d; border-left: 4px solid #97266d; }
+        .card-aviation .sc-title { background: #f0fff4; color: #276749; border-left: 4px solid #276749; }
+
+        /* --- 列表项样式 --- */
+        .list-item {
+            display: flex; gap: 10px; font-size: 0.95rem; line-height: 1.6; color: #333;
+            background: #f8fafc; padding: 10px 12px; border-radius: 6px;
+        }
+        .list-bullet { color: var(--crcc-red); font-weight: bold; flex-shrink: 0; }
+        .list-text { text-align: justify; }
+
+        /* --- 底部导航按钮 --- */
+        .nav-container { position: fixed; bottom: 30px; right: 30px; display: flex; gap: 15px; z-index: 100; }
+        .nav-btn {
+            padding: 10px 25px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 0.95rem;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15); transition: all 0.3s; display: flex; align-items: center; gap: 8px;
+        }
+        .prev-btn { background: white; color: var(--crcc-blue); border: 2px solid var(--crcc-blue); }
+        .prev-btn:hover { background: #f0f7ff; transform: translateY(-3px); }
+        .next-btn { background: var(--crcc-blue); color: white; border: 2px solid var(--crcc-blue); }
+        .next-btn:hover { background: var(--crcc-red); border-color: var(--crcc-red); transform: translateY(-3px); }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-section">
+            <div class="title-row">
+                <h2>二、公路建设高度相关的高风险作业（跨专业适用）</h2>
+                <div class="page-badge">进度: 4/6</div>
+            </div>
+            <div class="intro-box">
+                高速公路施工中经常涉及桥墩、桥面、隧道及大型基坑等，以下是从房屋市政、铁路、民航等分类中提取出的、与公路建设紧密相关的高风险作业(如高空、基坑、模板支架等)判定标准：
+            </div>
+        </div>
+
+        <div class="grid-layout">
+            
+            <div class="main-column col-left scrollable">
+                <div class="col-header ch-skyfire">
+                    <span>☁️🔥</span> 1. 涉高空及动火作业类
+                </div>
+
+                <div class="sub-card card-sky">
+                    <div class="sc-title">🏗️ 高处作业 (房屋市政工程类)</div>
+                    <div class="sc-body">
+                        <div class="list-item">
+                            <span class="list-bullet">○</span>
+                            <span class="list-text">悬挑式卸料平台的搁置点、拉结点、支撑点未设置在稳定的主体结构上，且未做可靠连接</span>
+                        </div>
+                        <div class="list-item">
+                            <span class="list-bullet">○</span>
+                            <span class="list-text">脚手架与结构外表面之间贯通未采取水平防护措施，或电梯井道内贯通未采取水平防护措施且电梯井口未设置防护门</span>
+                        </div>
+                        <div class="list-item">
+                            <span class="list-bullet">○</span>
+                            <span class="list-text">高处作业吊篮超载使用，或安全锁失效、安全绳(用于挂设安全带)未独立悬挂</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-card card-fire">
+                    <div class="sc-title">⚡ 动火作业 (所有工程类别通用)</div>
+                    <div class="sc-body">
+                        <div class="list-item">
+                            <span class="list-bullet">○</span>
+                            <span class="list-text">电气焊等动火作业人员未经安全培训或无证(特种作业操作证)上岗</span>
+                        </div>
+                        <div class="list-item">
+                            <span class="list-bullet">○</span>
+                            <span class="list-text">动火作业未履行作业审批手续、现场无专人监护</span>
+                        </div>
+                        <div class="list-item">
+                            <span class="list-bullet">○</span>
+                            <span class="list-text">高空动火作业未采取有效接火措施、未配备灭火器材等</span>
+                        </div>
+                        <div class="list-item">
+                            <span class="list-bullet">○</span>
+                            <span class="list-text">作业人员违反消防安全操作规程，违规动火</span>
+                        </div>
+                        <div class="list-item">
+                            <span class="list-bullet">○</span>
+                            <span class="list-text">使用淘汰或危及安全的电气焊设备</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-column col-right scrollable">
+                <div class="col-header ch-earthrock">
+                    <span>⛰️🕳️</span> 2. 涉基坑与边坡工程类
+                </div>
+
+                <div class="sub-card card-municipal">
+                    <div class="sc-title">🏢 基坑、边坡 (房屋市政工程类)</div>
+                    <div class="sc-body">
+                        <div class="list-item">
+                            <span class="list-bullet">○</span>
+                            <span class="list-text">深基坑、高边坡(一级、二级)施工未进行第三方监测</span>
+                        </div>
+                        <div class="list-item">
+                            <span class="list-bullet">○</span>
+                            <span class="list-text">有下列基坑、边坡坍塌风险预兆之一，且未及时处理：<br>
+                                1. 支护结构或周边建筑物变形值超过设计变形控制值；<br>
+                                2. 基坑侧壁出现大量漏水、流土；<br>
+                                3. 基坑底部出现管涌或突涌；<br>
+                                4. 桩间土流失孔洞深度超过桩径。
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-card card-aviation">
+                    <div class="sc-title">✈️ 深基坑工程 (民航专业工程类)</div>
+                    <div class="sc-body">
+                        <div class="list-item">
+                            <span class="list-bullet">○</span>
+                            <span class="list-text">开挖时未逐级开挖逐级防护或出现严重超挖情况</span>
+                        </div>
+                        <div class="list-item">
+                            <span class="list-bullet">○</span>
+                            <span class="list-text">未按照自上而下的顺序分层、分段、对称、均衡，适时的原则进行开挖</span>
+                        </div>
+                        <div class="list-item">
+                            <span class="list-bullet">○</span>
+                            <span class="list-text">未按设计或方案设置临时排水设施</span>
+                        </div>
+                        <div class="list-item">
+                            <span class="list-bullet">○</span>
+                            <span class="list-text">未按规范或设计要求采取监测措施</span>
+                        </div>
+                        <div class="list-item">
+                            <span class="list-bullet">○</span>
+                            <span class="list-text">侧壁出现大量漏水、流土，底部出现管涌，周边道路出现裂缝、鼓包塌陷，管线、建筑物或构筑物等出现危险征兆且未采取有效防治措施</span>
+                        </div>
+                        <div class="list-item">
+                            <span class="list-bullet">○</span>
+                            <span class="list-text">对因基坑工程施工可能造成损害的毗邻重要建筑物、构筑物和地下管线等，未采取专项防护措施</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="nav-container">
+        <a href="p3.html" class="nav-btn prev-btn">⬅ 上一页</a>
+        <a href="p5.html" class="nav-btn next-btn">下一页 ➔</a>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.body.innerHTML = document.body.innerHTML.replace(/\]+\]/g, '');
+        });
+    </script>
+</body>
+</html>
